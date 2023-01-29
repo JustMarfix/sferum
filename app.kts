@@ -1,23 +1,23 @@
 // Пример первых входных: balance: 1000, books: [("Алгебра, 10 класс", 5, 100), ("Теория чисел, 2 класс", 42, 500)]
 fun main() {
-    val text = readLine()!!.split("balance: ", "books: ")
+    val text = readLine()!!.split("balance: ", "books: ") // приводим данные к удобному виду
     var bal = text[1].replace(",", "").replace(" ", "").toInt()
     var books = text[2].replace("[", "").replace("]", "").replace(")", "").replace("(", "").replace("\",", "\"\",")
         .replace("1,", "11,").replace("2,", "22,").replace("3,", "33,").replace("4,", "44,").replace("5,", "55,")
         .replace("6,", "66,").replace("7,", "77,").replace("8,", "88,").replace("9,", "99,").replace("0,", "00,")
         .replace("  ", " ") // костыль, очень важный костыль.
         .split("\", ", "1, ", "2, ", "3, ", "4, ", "5, ", "6, ", "7, ", "8, ", "9, ", "0, ",).toMutableList()
-    var stock = 0
-    var final = emptyList<Any>().toMutableList()
-        while (stock < books.size) { //самый главный костыль
+    var stock = 0 // стоковая переменная, нужна для обхода через while
+    var final = emptyList<Any>().toMutableList() // Финальный список книг вида ["Название", <кол-во>, <цена>]
+        while (stock < books.size) { //Из-за того, что нельзя изменить тип элемента в массиве, переписываем данные в новый массив.
         final.add(books[stock])
         final.add(books[stock + 1].toInt())
         final.add(books[stock + 2].toInt())
         stock += 3
     }
     stock = 0
-    var bought = emptyList<Any>().toMutableList()
-    var out1 = ""
+    var bought = emptyList<Any>().toMutableList() // список купленных книг
+    var out1 = "" // стоковые переменные, нужны для вывода списков книг
     var out2 = ""
     println("███████╗██╗░░░░░███████╗░█████╗░████████╗██████╗░░█████╗░  ██████╗░░█████╗░░█████╗░██╗░░██╗░██████╗")
     println("██╔════╝██║░░░░░██╔════╝██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗  ██╔══██╗██╔══██╗██╔══██╗██║░██╔╝██╔════╝")
@@ -27,9 +27,10 @@ fun main() {
     println("╚══════╝╚══════╝╚══════╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░  ╚═════╝░░╚════╝░░╚════╝░╚═╝░░╚═╝╚═════╝░")
     println("Введите \"help\" для справки, или \"exit\" для выхода. Ввод осуществляется без кавычек.")
     while (true) {
-        var check = false
+        var check = false // переменная для проверки условия в команде "buy"
+        print(">>> ")
         var a = readLine()
-         var test = false
+         var test = false // переменная для проверки условия в команде "buy"
         if (a == "print balance") {
             println("balance: $bal руб.")
         }
@@ -66,17 +67,17 @@ fun main() {
             }
         }
         else if (a!!.startsWith("buy")) {
-            var b = a!!.replace(" \"", " \"\"").replace("\" ", "\"\" ").split(" \"", "\" ").toMutableList()
+            var b = a!!.replace(" \"", " \"\"").replace("\" ", "\"\" ").split(" \"", "\" ").toMutableList() // первыый массив с данными, которые ввёл пользователь
             if (b.size != 3) { // защита на случай опечаток, т.к. несколько пробелов и пр.
                     println("no deal")
                     continue
                 }
-            var c = emptyList<Any>().toMutableList()
+            var c = emptyList<Any>().toMutableList() // новый массив для замены типов данных
             stock = 0
             c.add(b[1])
             c.add(b[2].toInt())
             while (stock < final.size) {
-                   if (final[stock] == c[0] && 0 < final[stock + 1].toString().toInt() && final[stock + 2].toString().toInt() * c[1].toString().toInt() <= bal.toString().toInt() && final[stock + 1].toString().toInt() >= c[1].toString().toInt()) {
+                   if (final[stock] == c[0] && c[1].toString().toInt() != 0 && 0 < final[stock + 1].toString().toInt() && final[stock + 2].toString().toInt() * c[1].toString().toInt() <= bal.toString().toInt() && final[stock + 1].toString().toInt() >= c[1].toString().toInt() && c[1].toString().toInt() > 0) {
                    test = true
                    }
                     if (test == true) {
@@ -86,7 +87,7 @@ fun main() {
             }
             if (test == true) {
                 println("deal")
-                    final[stock+1] = final[stock+1].toString().toInt() - c[1].toString().toInt()
+                    final[stock+1] = final[stock+1].toString().toInt() - c[1].toString().toInt() // .toStr().toInt() исправляет баг Kotlin, переводя число в строку и обратно в число.
                     bal = bal.toString().toInt() - c[1].toString().toInt() * final[stock+2].toString().toInt()
                 stock = 0
                 while (stock < bought.size) {
